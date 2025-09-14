@@ -5,7 +5,7 @@
 #include "framework.h"
 #include "MFC-ListCtrl.h"
 #include "CListCtrlDlg.h"
-#include "CDataManagerDlg.h"
+#include "CkVFactorListDlg.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -42,7 +42,7 @@ BOOL CListCtrlDlg::OnInitDialog()
 void CListCtrlDlg::OnBnClickedBtnkVFactorTest()
 {
 	// kV Factor List Test 다이얼로그 생성 및 표시
-	CkVFactorListTestDlg dlgkVFactorTest(this);
+	CkVFactorListDlg dlgkVFactorTest(this);
 	dlgkVFactorTest.DoModal();
 }
 

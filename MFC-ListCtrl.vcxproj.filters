@@ -33,10 +33,7 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CDataManagerDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CkVFactorListTestDlg.h">
+    <ClInclude Include="CkVFactorListDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,16 +41,13 @@
     <ClCompile Include="MFC-ListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CListCtrlDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CDataManagerDlg.cpp">
+    <ClCompile Include="CkVFactorListDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CkVFactorListTestDlg.cpp">
+    <ClCompile Include="CListCtrlDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

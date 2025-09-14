@@ -183,8 +183,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CDataManagerDlg.h" />
-    <ClInclude Include="CkVFactorListTestDlg.h" />
+    <ClInclude Include="CkVFactorListDlg.h" />
     <ClInclude Include="CListCtrlDlg.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MFC-ListCtrl.h" />
@@ -193,8 +192,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CDataManagerDlg.cpp" />
-    <ClCompile Include="CkVFactorListTestDlg.cpp" />
+    <ClCompile Include="CkVFactorListDlg.cpp" />
     <ClCompile Include="CListCtrlDlg.cpp" />
     <ClCompile Include="MFC-ListCtrl.cpp" />
     <ClCompile Include="pch.cpp">
