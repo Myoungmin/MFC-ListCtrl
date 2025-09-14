@@ -12,10 +12,10 @@
 #define new DEBUG_NEW
 #endif
 
-// 외부 SDK API 시뮬레이션을 위한 전역 변수
+// Global variable for external SDK API simulation
 static std::vector<ST_KV_RATIO> g_DataStorage;
 
-// 외부 SDK API 구현 (시뮬레이션)
+// External SDK API implementation (simulation)
 void kVFactorListSet(const ST_KV_RATIO* pstItems, int nCount)
 {
 	g_DataStorage.clear();
@@ -56,14 +56,14 @@ BOOL CkVFactorListDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// 컨트롤 포인터 초기화
+	// Initialize control pointers
 	m_pListCtrl = static_cast<CListCtrl*>(GetDlgItem(IDC_LIST_DATA));
 	m_pEditInput = static_cast<CEdit*>(GetDlgItem(IDC_EDIT_INPUT));
 
-	// ListControl 초기화
+	// Initialize ListControl
 	InitializeListControl();
 
-	// 샘플 데이터가 없으면 초기화
+	// Initialize sample data if no data exists
 	const ST_KV_RATIO* pstItems = nullptr;
 	int nCount = 0;
 	kVFactorListGet(&pstItems, &nCount);
@@ -73,7 +73,7 @@ BOOL CkVFactorListDlg::OnInitDialog()
 		InitializeSampleData();
 	}
 
-	// 초기 데이터 로드
+	// Load initial data
 	OnBnClickedBtnRefresh();
 
 	return TRUE;
@@ -83,17 +83,17 @@ void CkVFactorListDlg::InitializeListControl()
 {
 	if (m_pListCtrl == nullptr) return;
 
-	// Full Row Select 스타일 설정
+	// Set Full Row Select style
 	m_pListCtrl->SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
 
-	// 컬럼 추가
-	m_pListCtrl->InsertColumn(0, _T("kV"), LVCFMT_LEFT, 100);
-	m_pListCtrl->InsertColumn(1, _T("Ratio"), LVCFMT_LEFT, 150);
+	// Add columns with compact width
+	m_pListCtrl->InsertColumn(0, _T("kV"), LVCFMT_LEFT, 120);
+	m_pListCtrl->InsertColumn(1, _T("Ratio"), LVCFMT_LEFT, 120);
 }
 
 void CkVFactorListDlg::InitializeSampleData()
 {
-	// 샘플 데이터 준비
+	// Prepare sample data
 	ST_KV_RATIO astSampleData[] = {
 		{80.0f, 1.0f},
 		{90.0f, 1.2f},
@@ -102,7 +102,7 @@ void CkVFactorListDlg::InitializeSampleData()
 		{120.0f, 1.8f}
 	};
 
-	// 샘플 데이터 저장
+	// Save sample data
 	kVFactorListSet(astSampleData, sizeof(astSampleData) / sizeof(ST_KV_RATIO));
 }
 
@@ -117,13 +117,13 @@ void CkVFactorListDlg::OnBnClickedBtnSave()
 	CString strLine;
 	int nStartPos = 0;
 
-	// 줄 단위로 파싱
+	// Parse line by line
 	while (true)
 	{
 		strLine = strInput.Tokenize(_T("\r\n"), nStartPos);
 		if (strLine.IsEmpty()) break;
 
-		// CSV 파싱 (kV,Ratio)
+		// CSV parsing (kV,Ratio)
 		int nCommaPos = strLine.Find(_T(','));
 		if (nCommaPos > 0)
 		{
@@ -138,19 +138,20 @@ void CkVFactorListDlg::OnBnClickedBtnSave()
 		}
 	}
 
-	// kVFactorListSet 호출하여 펌웨어에 저장
+	// Call kVFactorListSet to save to firmware
 	if (!vecData.empty())
 	{
 		kVFactorListSet(vecData.data(), static_cast<int>(vecData.size()));
 	}
 
-	// 저장 후 자동으로 Refresh하여 ListControl 업데이트
+	// Auto refresh after save to update ListControl
 	OnBnClickedBtnRefresh();
 }
 
 void CkVFactorListDlg::OnBnClickedBtnRefresh()
 {
-	// 펌웨어에서 데이터를 불러와서 ListControl만 업데이트
+	// Load data from firmware and update EditBox and ListControl
+	UpdateEditBox();
 	UpdateListControl();
 }
 
@@ -158,15 +159,15 @@ void CkVFactorListDlg::UpdateListControl()
 {
 	if (m_pListCtrl == nullptr) return;
 
-	// 기존 아이템 삭제
+	// Delete existing items
 	m_pListCtrl->DeleteAllItems();
 
-	// kVFactorListGet로 데이터 가져오기
+	// Get data using kVFactorListGet
 	const ST_KV_RATIO* pstItems = nullptr;
 	int nCount = 0;
 	kVFactorListGet(&pstItems, &nCount);
 
-	// 리스트에 데이터 추가
+	// Add data to list
 	for (int i = 0; i < nCount; i++)
 	{
 		CString strKV, strRatio;
@@ -182,12 +183,12 @@ void CkVFactorListDlg::UpdateEditBox()
 {
 	if (m_pEditInput == nullptr) return;
 
-	// kVFactorListGet로 데이터 가져오기
+	// Get data using kVFactorListGet
 	const ST_KV_RATIO* pstItems = nullptr;
 	int nCount = 0;
 	kVFactorListGet(&pstItems, &nCount);
 
-	// CSV 형식으로 문자열 생성
+	// Generate string in CSV format
 	CString strOutput;
 	for (int i = 0; i < nCount; i++)
 	{

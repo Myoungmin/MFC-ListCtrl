@@ -41,7 +41,7 @@ BOOL CListCtrlDlg::OnInitDialog()
 
 void CListCtrlDlg::OnBnClickedBtnkVFactorTest()
 {
-	// kV Factor List Test 다이얼로그 생성 및 표시
+	// Create and display kV Factor List Test dialog
 	CkVFactorListDlg dlgkVFactorTest(this);
 	dlgkVFactorTest.DoModal();
 }

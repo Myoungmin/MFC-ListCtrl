@@ -4,14 +4,14 @@
 
 #pragma once
 
-// ST_KV_RATIO 구조체 정의
+// ST_KV_RATIO structure definition
 typedef struct _ST_KV_RATIO
 {
 	float fKV;
 	float fRatio;
 } ST_KV_RATIO;
 
-// 외부 SDK API 함수 선언
+// External SDK API function declarations
 void kVFactorListSet(const ST_KV_RATIO* pstItems, int nCount);
 void kVFactorListGet(const ST_KV_RATIO** ppstItems, int* pnCount);
 
