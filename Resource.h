@@ -8,7 +8,7 @@
 #define IDC_LIST_DATA					1000
 #define IDC_EDIT_INPUT					1001
 #define IDC_BTN_SAVE					1002
-#define IDC_BTN_LOAD					1003
+#define IDC_BTN_REFRESH					1003
 #define IDC_BTN_KV_FACTOR_TEST				1004
 
 // Next default values for new objects

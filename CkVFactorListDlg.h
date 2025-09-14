@@ -34,7 +34,7 @@ protected:
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedBtnSave();
-	afx_msg void OnBnClickedBtnLoad();
+	afx_msg void OnBnClickedBtnRefresh();
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedCancel();
 	DECLARE_MESSAGE_MAP()

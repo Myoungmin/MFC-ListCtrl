@@ -47,7 +47,7 @@ void CkVFactorListDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CkVFactorListDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_SAVE, &CkVFactorListDlg::OnBnClickedBtnSave)
-	ON_BN_CLICKED(IDC_BTN_LOAD, &CkVFactorListDlg::OnBnClickedBtnLoad)
+	ON_BN_CLICKED(IDC_BTN_REFRESH, &CkVFactorListDlg::OnBnClickedBtnRefresh)
 	ON_BN_CLICKED(IDOK, &CkVFactorListDlg::OnBnClickedOk)
 	ON_BN_CLICKED(IDCANCEL, &CkVFactorListDlg::OnBnClickedCancel)
 END_MESSAGE_MAP()
@@ -76,7 +76,7 @@ BOOL CkVFactorListDlg::OnInitDialog()
 	}
 
 	// 초기 데이터 로드
-	OnBnClickedBtnLoad();
+	OnBnClickedBtnRefresh();
 
 	return TRUE;
 }
@@ -140,27 +140,19 @@ void CkVFactorListDlg::OnBnClickedBtnSave()
 		}
 	}
 
-	// kVFactorListSet 호출
+	// kVFactorListSet 호출하여 펌웨어에 저장
 	if (!vecData.empty())
 	{
 		kVFactorListSet(vecData.data(), static_cast<int>(vecData.size()));
 	}
 
-	// 리스트 컨트롤 업데이트
-	UpdateListControl();
+	// 저장 후 자동으로 Refresh하여 ListControl 업데이트
+	OnBnClickedBtnRefresh();
 }
 
-void CkVFactorListDlg::OnBnClickedBtnLoad()
+void CkVFactorListDlg::OnBnClickedBtnRefresh()
 {
-	// kVFactorListGet 호출
-	const ST_KV_RATIO* pstItems = nullptr;
-	int nCount = 0;
-	kVFactorListGet(&pstItems, &nCount);
-
-	// EditBox 업데이트
-	UpdateEditBox();
-
-	// ListControl 업데이트
+	// 펌웨어에서 데이터를 불러와서 ListControl만 업데이트
 	UpdateListControl();
 }
 
