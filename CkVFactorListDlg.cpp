@@ -48,8 +48,6 @@ void CkVFactorListDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CkVFactorListDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_SAVE, &CkVFactorListDlg::OnBnClickedBtnSave)
 	ON_BN_CLICKED(IDC_BTN_REFRESH, &CkVFactorListDlg::OnBnClickedBtnRefresh)
-	ON_BN_CLICKED(IDOK, &CkVFactorListDlg::OnBnClickedOk)
-	ON_BN_CLICKED(IDCANCEL, &CkVFactorListDlg::OnBnClickedCancel)
 END_MESSAGE_MAP()
 
 // CkVFactorListDlg message handlers
@@ -202,17 +200,4 @@ void CkVFactorListDlg::UpdateEditBox()
 	}
 
 	m_pEditInput->SetWindowText(strOutput);
-}
-
-void CkVFactorListDlg::OnBnClickedOk()
-{
-	// OK 버튼 클릭 시 현재 편집 내용을 저장하고 다이얼로그 종료
-	OnBnClickedBtnSave();
-	CDialogEx::OnOK();
-}
-
-void CkVFactorListDlg::OnBnClickedCancel()
-{
-	// Cancel 버튼 클릭 시 변경사항 없이 다이얼로그 종료
-	CDialogEx::OnCancel();
 }
