@@ -13,22 +13,57 @@
 #endif
 
 // Global variable for external SDK API simulation
-static std::vector<ST_KV_RATIO> g_DataStorage;
+static AEC_KV_FACTOR_LIST g_DataStorage;
 
 // External SDK API implementation (simulation)
-void kVFactorListSet(const ST_KV_RATIO* pstItems, int nCount)
+void AecKvFactorListSet(AEC_KV_FACTOR_LIST* pList)
 {
-	g_DataStorage.clear();
-	for (int i = 0; i < nCount; i++)
+	if (pList == NULL) return;
+
+	// Clear existing data
+	if (g_DataStorage.pFactorList)
 	{
-		g_DataStorage.push_back(pstItems[i]);
+		delete[] g_DataStorage.pFactorList;
+		g_DataStorage.pFactorList = NULL;
+	}
+	g_DataStorage.nCount = 0;
+
+	// Copy new data
+	if (pList->nCount > 0 && pList->pFactorList != NULL)
+	{
+		g_DataStorage.nCount = pList->nCount;
+		g_DataStorage.pFactorList = new AEC_KV_FACTOR_DATA[pList->nCount];
+		
+		for (int i = 0; i < pList->nCount; i++)
+		{
+			g_DataStorage.pFactorList[i] = pList->pFactorList[i];
+		}
 	}
 }
 
-void kVFactorListGet(const ST_KV_RATIO** ppstItems, int* pnCount)
+void AecKvFactorListGet(AEC_KV_FACTOR_LIST* pList)
 {
-	*ppstItems = g_DataStorage.data();
-	*pnCount = static_cast<int>(g_DataStorage.size());
+	if (pList == NULL) return;
+
+	// Clear existing data in output structure
+	if (pList->pFactorList)
+	{
+		delete[] pList->pFactorList;
+		pList->pFactorList = NULL;
+	}
+	pList->nCount = 0;
+
+	// Copy data from global storage
+	if (g_DataStorage.nCount > 0 && g_DataStorage.pFactorList != NULL)
+	{
+		pList->nCount = g_DataStorage.nCount;
+		pList->pFactorList = new AEC_KV_FACTOR_DATA[g_DataStorage.nCount];
+		
+		for (int i = 0; i < g_DataStorage.nCount; i++)
+		{
+			pList->pFactorList[i] = g_DataStorage.pFactorList[i];
+		}
+	}
 }
 
 // CkVFactorListDlg dialog
@@ -64,11 +99,10 @@ BOOL CkVFactorListDlg::OnInitDialog()
 	InitializeListControl();
 
 	// Initialize sample data if no data exists
-	const ST_KV_RATIO* pstItems = nullptr;
-	int nCount = 0;
-	kVFactorListGet(&pstItems, &nCount);
+	AEC_KV_FACTOR_LIST stList;
+	AecKvFactorListGet(&stList);
 	
-	if (nCount == 0)
+	if (stList.nCount == 0)
 	{
 		InitializeSampleData();
 	}
@@ -88,22 +122,33 @@ void CkVFactorListDlg::InitializeListControl()
 
 	// Add columns with compact width
 	m_pListCtrl->InsertColumn(0, _T("kV"), LVCFMT_LEFT, 120);
-	m_pListCtrl->InsertColumn(1, _T("Ratio"), LVCFMT_LEFT, 120);
+	m_pListCtrl->InsertColumn(1, _T("Factor"), LVCFMT_LEFT, 120);
 }
 
 void CkVFactorListDlg::InitializeSampleData()
 {
 	// Prepare sample data
-	ST_KV_RATIO astSampleData[] = {
-		{80.0f, 1.0f},
-		{90.0f, 1.2f},
-		{100.0f, 1.4f},
-		{110.0f, 1.6f},
-		{120.0f, 1.8f}
-	};
+	AEC_KV_FACTOR_LIST stList;
+	stList.nCount = 5;
+	stList.pFactorList = new AEC_KV_FACTOR_DATA[5];
+	
+	stList.pFactorList[0].kV = 80;
+	stList.pFactorList[0].Factor = 1.0f;
+	
+	stList.pFactorList[1].kV = 90;
+	stList.pFactorList[1].Factor = 1.2f;
+	
+	stList.pFactorList[2].kV = 100;
+	stList.pFactorList[2].Factor = 1.4f;
+	
+	stList.pFactorList[3].kV = 110;
+	stList.pFactorList[3].Factor = 1.6f;
+	
+	stList.pFactorList[4].kV = 120;
+	stList.pFactorList[4].Factor = 1.8f;
 
 	// Save sample data
-	kVFactorListSet(astSampleData, sizeof(astSampleData) / sizeof(ST_KV_RATIO));
+	AecKvFactorListSet(&stList);
 }
 
 void CkVFactorListDlg::OnBnClickedBtnSave()
@@ -113,7 +158,7 @@ void CkVFactorListDlg::OnBnClickedBtnSave()
 	CString strInput;
 	m_pEditInput->GetWindowText(strInput);
 
-	std::vector<ST_KV_RATIO> vecData;
+	std::vector<AEC_KV_FACTOR_DATA> vecData;
 	CString strLine;
 	int nStartPos = 0;
 
@@ -123,25 +168,34 @@ void CkVFactorListDlg::OnBnClickedBtnSave()
 		strLine = strInput.Tokenize(_T("\r\n"), nStartPos);
 		if (strLine.IsEmpty()) break;
 
-		// CSV parsing (kV,Ratio)
+		// CSV parsing (kV,Factor)
 		int nCommaPos = strLine.Find(_T(','));
 		if (nCommaPos > 0)
 		{
 			CString strKV = strLine.Left(nCommaPos);
-			CString strRatio = strLine.Mid(nCommaPos + 1);
+			CString strFactor = strLine.Mid(nCommaPos + 1);
 
-			ST_KV_RATIO stData;
-			stData.fKV = static_cast<float>(_tstof(strKV));
-			stData.fRatio = static_cast<float>(_tstof(strRatio));
+			AEC_KV_FACTOR_DATA stData;
+			stData.kV = _ttoi(strKV);
+			stData.Factor = static_cast<float>(_tstof(strFactor));
 
 			vecData.push_back(stData);
 		}
 	}
 
-	// Call kVFactorListSet to save to firmware
+	// Call AecKvFactorListSet to save to firmware
 	if (!vecData.empty())
 	{
-		kVFactorListSet(vecData.data(), static_cast<int>(vecData.size()));
+		AEC_KV_FACTOR_LIST stList;
+		stList.nCount = static_cast<int>(vecData.size());
+		stList.pFactorList = new AEC_KV_FACTOR_DATA[stList.nCount];
+		
+		for (int i = 0; i < stList.nCount; i++)
+		{
+			stList.pFactorList[i] = vecData[i];
+		}
+		
+		AecKvFactorListSet(&stList);
 	}
 
 	// Auto refresh after save to update ListControl
@@ -162,20 +216,19 @@ void CkVFactorListDlg::UpdateListControl()
 	// Delete existing items
 	m_pListCtrl->DeleteAllItems();
 
-	// Get data using kVFactorListGet
-	const ST_KV_RATIO* pstItems = nullptr;
-	int nCount = 0;
-	kVFactorListGet(&pstItems, &nCount);
+	// Get data using AecKvFactorListGet
+	AEC_KV_FACTOR_LIST stList;
+	AecKvFactorListGet(&stList);
 
 	// Add data to list
-	for (int i = 0; i < nCount; i++)
+	for (int i = 0; i < stList.nCount; i++)
 	{
-		CString strKV, strRatio;
-		strKV.Format(_T("%.1f"), pstItems[i].fKV);
-		strRatio.Format(_T("%.2f"), pstItems[i].fRatio);
+		CString strKV, strFactor;
+		strKV.Format(_T("%d"), stList.pFactorList[i].kV);
+		strFactor.Format(_T("%.2f"), stList.pFactorList[i].Factor);
 
 		int nItem = m_pListCtrl->InsertItem(i, strKV);
-		m_pListCtrl->SetItemText(nItem, 1, strRatio);
+		m_pListCtrl->SetItemText(nItem, 1, strFactor);
 	}
 }
 
@@ -183,17 +236,16 @@ void CkVFactorListDlg::UpdateEditBox()
 {
 	if (m_pEditInput == nullptr) return;
 
-	// Get data using kVFactorListGet
-	const ST_KV_RATIO* pstItems = nullptr;
-	int nCount = 0;
-	kVFactorListGet(&pstItems, &nCount);
+	// Get data using AecKvFactorListGet
+	AEC_KV_FACTOR_LIST stList;
+	AecKvFactorListGet(&stList);
 
 	// Generate string in CSV format
 	CString strOutput;
-	for (int i = 0; i < nCount; i++)
+	for (int i = 0; i < stList.nCount; i++)
 	{
 		CString strLine;
-		strLine.Format(_T("%.1f,%.2f"), pstItems[i].fKV, pstItems[i].fRatio);
+		strLine.Format(_T("%d,%.2f"), stList.pFactorList[i].kV, stList.pFactorList[i].Factor);
 		
 		if (i > 0)
 			strOutput += _T("\r\n");

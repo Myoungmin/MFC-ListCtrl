@@ -4,16 +4,42 @@
 
 #pragma once
 
-// ST_KV_RATIO structure definition
-typedef struct _ST_KV_RATIO
+// AEC_KV_FACTOR_DATA structure definition
+struct AEC_KV_FACTOR_DATA
 {
-	float fKV;
-	float fRatio;
-} ST_KV_RATIO;
+	int kV;
+	float Factor;
+
+	AEC_KV_FACTOR_DATA()
+	{
+		memset(this, 0, sizeof(AEC_KV_FACTOR_DATA));
+	}
+};
+
+// AEC_KV_FACTOR_LIST structure definition
+struct AEC_KV_FACTOR_LIST
+{
+	int nCount;
+	AEC_KV_FACTOR_DATA* pFactorList;
+
+	AEC_KV_FACTOR_LIST()
+	{
+		nCount = 0;
+		pFactorList = NULL;
+	}
+
+	~AEC_KV_FACTOR_LIST()
+	{
+		if(pFactorList)
+			delete[] pFactorList;
+
+		pFactorList = NULL;
+	}
+};
 
 // External SDK API function declarations
-void kVFactorListSet(const ST_KV_RATIO* pstItems, int nCount);
-void kVFactorListGet(const ST_KV_RATIO** ppstItems, int* pnCount);
+void AecKvFactorListGet(AEC_KV_FACTOR_LIST* pList);
+void AecKvFactorListSet(AEC_KV_FACTOR_LIST* pList);
 
 // CkVFactorListDlg dialog
 class CkVFactorListDlg : public CDialogEx
